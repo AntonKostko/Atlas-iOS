@@ -514,14 +514,14 @@ static NSInteger const ATLPhotoActionSheet = 1000;
     
     LYRMessage *message = [self.conversationDataSource messageAtCollectionViewSection:section];
     LYRMessage *previousMessage = [self.conversationDataSource messageAtCollectionViewSection:section - 1];
-    if (!previousMessage.sentAt) return NO;
+    if (!previousMessage.sentAt) return YES;
     
     NSDate *date = message.sentAt ?: [NSDate date];
-    NSTimeInterval interval = [date timeIntervalSinceDate:previousMessage.sentAt];
-    if (fabs(interval) > self.dateDisplayTimeInterval) {
-        return YES;
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    if ([calendar isDate:date inSameDayAsDate:previousMessage.sentAt]) {
+        return NO;
     }
-    return NO;
+    return YES;
 }
 
 - (BOOL)shouldDisplaySenderLabelForSection:(NSUInteger)section

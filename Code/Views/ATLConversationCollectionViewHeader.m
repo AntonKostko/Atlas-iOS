@@ -25,6 +25,7 @@
 
 @property (nonatomic) UILabel *dateLabel;
 @property (nonatomic) UILabel *participantLabel;
+@property (nonatomic) UIView *dateLabelLine;
 
 @end
 
@@ -54,6 +55,7 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
     ATLConversationCollectionViewHeader *proxy = [self appearance];
     proxy.participantLabelTextColor = [UIColor grayColor];
     proxy.participantLabelFont = [UIFont systemFontOfSize:11];
+    proxy.lineColor = [UIColor redColor];
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -76,6 +78,12 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
 
 - (void)lyr_commonInit
 {
+    
+    self.dateLabelLine = [[UIView alloc] init];
+    self.dateLabelLine.backgroundColor = _lineColor;
+    self.dateLabelLine.translatesAutoresizingMaskIntoConstraints = NO;
+    [self addSubview:self.dateLabelLine];
+    
     self.dateLabel = [[UILabel alloc] init];
     self.dateLabel.textAlignment = NSTextAlignmentCenter;
     self.dateLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -87,7 +95,8 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
     self.participantLabel.translatesAutoresizingMaskIntoConstraints = NO;
     self.participantLabel.accessibilityLabel = ATLConversationViewHeaderIdentifier;
     [self addSubview:self.participantLabel];
-    
+
+    [self configureDateLabelLineConstraints];
     [self configureDateLabelConstraints];
     [self configureParticipantLabelConstraints];
 }
@@ -101,7 +110,11 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
 
 - (void)updateWithAttributedStringForDate:(NSAttributedString *)date
 {
-    if (!date) return;
+    if (!date) {
+        self.dateLabelLine.hidden = YES;
+        return;
+    }
+    self.dateLabelLine.hidden = [date.string isEqualToString:@""];
     self.dateLabel.attributedText = date;
 }
 
@@ -124,6 +137,11 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
 {
     _participantLabelTextColor = participantLabelTextColor;
     self.participantLabel.textColor = participantLabelTextColor;
+}
+
+- (void)setLineColor:(UIColor *)lineColor {
+    _lineColor = lineColor;
+    self.dateLabelLine.backgroundColor = lineColor;
 }
 
 + (CGFloat)headerHeightWithDateString:(NSAttributedString *)dateString participantName:(NSString *)participantName inView:(UIView *)view
@@ -152,6 +170,14 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
     }
     
     return height;
+}
+
+- (void)configureDateLabelLineConstraints
+{
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.dateLabelLine attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self.dateLabel attribute:NSLayoutAttributeCenterY multiplier:1.0 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.dateLabelLine attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:1]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.dateLabelLine attribute:NSLayoutAttributeLeading relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeading multiplier:1.0 constant:0]];
+    [self addConstraint:[NSLayoutConstraint constraintWithItem:self.dateLabelLine attribute:NSLayoutAttributeTrailing relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTrailing multiplier:1.0 constant:0]];
 }
 
 - (void)configureDateLabelConstraints

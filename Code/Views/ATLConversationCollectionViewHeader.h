@@ -37,6 +37,11 @@ extern NSString *const ATLConversationViewHeaderIdentifier;
 @property (nonatomic, null_unspecified) LYRMessage *message;
 
 /**
+ @abstract The color for the date label line in the header.
+ */
+@property (nonatomic) UIColor *lineColor UI_APPEARANCE_SELECTOR;
+
+/**
  @abstract The font for the participant label displayed in the header. Default is 10pt system font.
  */
 @property (nonatomic) UIFont *participantLabelFont UI_APPEARANCE_SELECTOR;
