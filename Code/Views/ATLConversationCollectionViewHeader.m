@@ -123,7 +123,7 @@ CGFloat const ATLConversationViewHeaderEmptyHeight = 1;
     if (participantName.length) {
         self.participantLabel.text = participantName;
     } else {
-        self.participantLabel.text = @"Unknown User";
+        self.participantLabel.text = @"";
     }
 }
 
